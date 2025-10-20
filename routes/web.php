@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PoliController;
+use App\Http\Controllers\DokterController;
+use App\Http\Controllers\PasienController;
+use App\Http\Controllers\ObatController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,11 +18,19 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 // Admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-});
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->as('admin.')
+    ->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        Route::resource('polis', PoliController::class);
+        Route::resource('dokter', DokterController::class);
+        Route::resource('pasien', PasienController::class);
+        Route::resource('obat', ObatController::class);
+    });
 
 // Dokter
 Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () {
