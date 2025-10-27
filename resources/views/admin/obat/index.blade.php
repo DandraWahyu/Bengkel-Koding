@@ -1,11 +1,9 @@
-<x-layouts.app title="Data Poli">
-    @if (session('success'))
-        <div class="alert alert-success" id="alert">{{ session('success') }}</div>
-    @endif
-
+<x-layouts.app title="Data Obat">
     <div class="container-fluid px-4 mt-4">
         <div class="row">
             <div class="col-lg-12">
+
+                {{-- Alert flash message --}}
                 @if (session('message'))
                     <div class="alert alert-{{ session('type', 'success') }} alert-dismissible fade show" role="alert">
                         {{ session('message') }}
@@ -13,34 +11,36 @@
                     </div>
                 @endif
 
-                <h1 class="mb-4">Data Poli</h1>
+                <h1 class="mb-4">Data Obat</h1>
 
-                <a href="{{ route('admin.polis.create') }}" class="btn btn-primary mb-3">
-                    <i class="fas fa-plus"></i> Tambah Poli
+                <a href="{{ route('admin.obat.create') }}" class="btn btn-primary mb-3">
+                    <i class="fas fa-plus"></i> Tambah Obat
                 </a>
 
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="thead-light">
                             <tr>
-                                <th>Nama Poli</th>
-                                <th>Keterangan</th>
+                                <th>Nama Obat</th>
+                                <th>Kemasan</th>
+                                <th>Harga</th>
                                 <th style="width: 150px;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($polis as $poli)
+                            @forelse ($obats as $obat)
                                 <tr>
-                                    <td>{{ $poli->nama_poli }}</td>
-                                    <td>{{ $poli->keterangan }}</td>
+                                    <td>{{ $obat->nama_obat }}</td>
+                                    <td>{{ $obat->kemasan }}</td>
+                                    <td>{{ 'Rp ' . number_format($obat->harga, 0, ',', '.') }}</td>
                                     <td>
-                                        <a href="{{ route('admin.polis.edit', $poli->id) }}" class="btn btn-sm btn-warning">
+                                        <a href="{{ route('admin.obat.edit', $obat->id) }}" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <form action="{{ route('admin.polis.destroy', $poli->id) }}" method="POST" style="display: inline-block;">
+                                        <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus Poli ini ?')">
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus Data Obat ini ?')">
                                                 <i class="fas fa-trash"></i> Hapus
                                             </button>
                                         </form>
@@ -48,7 +48,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td class="text-center" colspan="3">Belum ada Poli</td>
+                                    <td class="text-center" colspan="4">
+                                        Belum ada Data Obat
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -60,8 +62,12 @@
 
     <script>
         setTimeout(() => {
-            const alert = document.getElementById('alert');
-            if (alert) alert.remove();
-        }, 3000);
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 2000);
     </script>
 </x-layouts.app>

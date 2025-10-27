@@ -9,37 +9,41 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Menampilkan halaman login
     public function showLogin()
     {
         return view('auth.login');
     }
 
+    // Menampilkan halaman register
     public function showRegister()
     {
         return view('auth.register');
     }
 
-
+    // Login
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
+            $request->session()->regenerate(); // Regenerate session untuk keamanan
+
             $user = Auth::user();
 
-            if($user->role == 'admin') {
+            if ($user->role == 'admin') {
                 return redirect()->route('admin.dashboard');
-            } elseif($user->role == 'dokter') {
+            } elseif ($user->role == 'dokter') {
                 return redirect()->route('dokter.dashboard');
-            } else{
+            } else {
                 return redirect()->route('pasien.dashboard');
             }
         }
 
-        return back()->withErrors(['email' => 'Email atau Password salah !']);
+        return back()->withErrors(['email' => 'Email atau Password salah!'])->withInput();
     }
 
-
+    // Register
     public function register(Request $request)
     {
         $request->validate([
@@ -47,8 +51,8 @@ class AuthController extends Controller
             'alamat' => ['required', 'string', 'max:255'],
             'no_ktp' => ['required', 'string', 'max:30'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'email' => ['required', 'string','email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'confirmed']
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
         User::create([
@@ -60,7 +64,17 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'pasien',
         ]);
-        
+
+        return redirect()->route('login')->with('success', 'Registrasi berhasil, silakan login!');
+    }
+
+    // Logout
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }

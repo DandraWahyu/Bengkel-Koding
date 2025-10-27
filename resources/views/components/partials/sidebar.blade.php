@@ -54,15 +54,15 @@
                             <p>Manajemen Pasien</p>
                         </a>
                     </li>
-
-                    <li class="nav-item">
+    
+                   <li class="nav-item">
                         <a href="{{ route('admin.obat.index') }}" 
                            class="nav-link {{ request()->routeIs('admin.obat.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-pills"></i>
                             <p>Manajemen Obat</p>
                         </a>
                     </li>
-                @endif
+                @endif 
 
                 <!-- ROLE PASIEN -->
                 @if (request()->is('pasien*'))
