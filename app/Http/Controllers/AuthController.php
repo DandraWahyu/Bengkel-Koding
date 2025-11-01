@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Poli;
 
 class AuthController extends Controller
 {
@@ -76,5 +77,11 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login');
+    }
+
+    public function dokter()
+    {
+        $data = Poli::with('dokters')->get();
+        return $data;
     }
 }
