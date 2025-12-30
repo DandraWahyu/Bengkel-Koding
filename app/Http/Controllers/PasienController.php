@@ -6,6 +6,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use App\Models\Poli;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DaftarPoli;
+use App\Models\JadwalPeriksa;
+
 class PasienController extends Controller
 {
     public function index()
@@ -88,4 +93,42 @@ class PasienController extends Controller
             ->with('message', 'Data Pasien berhasil dihapus')
             ->with('type', 'success');
     }
+
+
+
+// =======================
+// ROLE PASIEN
+// =======================
+
+public function daftar()
+{
+    $polis = Poli::all();
+    $jadwals = JadwalPeriksa::with('dokter')->get();
+
+    return view('pasien.daftar', compact('polis', 'jadwals'));
+}
+
+public function storeDaftar(Request $request)
+{
+    $request->validate([
+        'id_jadwal' => 'required|exists:jadwal_periksa,id',
+        'keluhan'   => 'required|string',
+    ]);
+
+    // Hitung nomor antrian otomatis
+    $lastAntrian = DaftarPoli::where('id_jadwal', $request->id_jadwal)->max('no_antrian');
+
+    DaftarPoli::create([
+        'id_pasien'  => Auth::id(),
+        'id_jadwal'  => $request->id_jadwal,
+        'keluhan'    => $request->keluhan,
+        'no_antrian' => ($lastAntrian ?? 0) + 1,
+    ]);
+
+    return redirect()
+        ->route('pasien.dashboard')
+        ->with('success', 'Berhasil mendaftar poli');
+}
+
+
 }

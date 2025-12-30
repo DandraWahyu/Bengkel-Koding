@@ -21,6 +21,26 @@
                         <form action="{{ route('dokter.jadwal-periksa.store') }}" method="POST">
                             @csrf
 
+                            {{-- Pilih Poli --}}
+                            <div class="form-group mb-3">
+                                <label for="id_poli" class="form-label">Poli</label>
+                                <select name="id_poli"
+                                        class="form-select @error('id_poli') is-invalid @enderror"
+                                        required>
+                                    <option value="">Pilih Poli</option>
+                                    @foreach($polis as $poli)
+                                        <option value="{{ $poli->id }}"
+                                            {{ old('id_poli') == $poli->id ? 'selected' : '' }}>
+                                            {{ $poli->nama_poli }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('id_poli')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+
                             {{-- Pilih Hari --}}
                             <div class="form-group mb-3">
                                 <label for="hari" class="form-label">Hari</label>

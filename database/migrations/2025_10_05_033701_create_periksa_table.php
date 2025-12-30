@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('periksa', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_daftar_poli')->constrained('daftar_poli')->cascadeOnDelete();
-            $table->dateTime('catatan')->nullable();
+            $table->text('catatan')->nullable();       // ubah dari dateTime menjadi text
             $table->integer('biaya_periksa');
+            $table->timestamp('tgl_periksa')->nullable(); // tambahkan kolom tgl_periksa
             $table->timestamps();
         });
+
     }
 
     /**

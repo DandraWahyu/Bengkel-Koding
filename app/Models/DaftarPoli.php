@@ -15,15 +15,19 @@ class DaftarPoli extends Model
         'no_antrian'
     ];
 
-    public function pasien(){
+    public function pasien()
+    {
         return $this->belongsTo(User::class, 'id_pasien');
     }
 
-    public function jadwalPeriksa(){
+    public function jadwal()
+    {
         return $this->belongsTo(JadwalPeriksa::class, 'id_jadwal');
     }
 
-    public function periksas(){
-        return $this->hasMany(Periksa::class, 'id_daftar_poli');
+    public function periksa()
+    {
+        return $this->hasOne(Periksa::class, 'id_daftar_poli');
     }
+
 }

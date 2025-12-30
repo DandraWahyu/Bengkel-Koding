@@ -34,16 +34,38 @@
                                     <td>{{ $obat->kemasan }}</td>
                                     <td>{{ 'Rp ' . number_format($obat->harga, 0, ',', '.') }}</td>
                                     <td>
-                                        <a href="{{ route('admin.obat.edit', $obat->id) }}" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <form action="{{ route('admin.obat.destroy', $obat->id) }}" method="POST" style="display: inline-block;">
+                                        <form action="{{ route('admin.obat.stok', $obat->id) }}"
+                                            method="POST"
+                                            class="d-inline">
                                             @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus Data Obat ini ?')">
-                                                <i class="fas fa-trash"></i> Hapus
+
+                                            <input type="number"
+                                                name="stok"
+                                                class="form-control form-control-sm mb-1"
+                                                placeholder="Jumlah"
+                                                required>
+
+                                            <select name="aksi"
+                                                    class="form-select form-select-sm mb-1"
+                                                    required>
+                                                <option value="tambah">Tambah</option>
+                                                <option value="kurang">Kurang</option>
+                                            </select>
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-primary">
+                                                Update Stok
                                             </button>
                                         </form>
+
+                                        <div class="mt-1">
+                                            Stok: {{ $obat->stok }}
+                                            @if ($obat->stok == 0)
+                                                <span class="badge bg-danger">Habis</span>
+                                            @elseif ($obat->stok <= 5)
+                                                <span class="badge bg-warning text-dark">Menipis</span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

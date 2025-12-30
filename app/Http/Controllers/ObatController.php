@@ -44,24 +44,20 @@ class ObatController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama_obat' => 'required|string|max:255',
-            'kemasan'   => 'required|string|max:100',
-            'harga'     => 'required|integer|min:0',
-        ]);
+{
+    $request->validate([
+        'nama_obat' => 'required',
+        'harga' => 'required|integer',
+        'stok' => 'required|integer|min:0',
+    ]);
 
-        $obat = Obat::findOrFail($id);
-        $obat->update([
-            'nama_obat' => $request->nama_obat,
-            'kemasan'   => $request->kemasan,
-            'harga'     => $request->harga,
-        ]);
+    $obat = Obat::findOrFail($id);
+    $obat->update($request->all());
 
-        return redirect()->route('admin.obat.index')
-            ->with('message', 'Data Obat berhasil diperbarui')
-            ->with('type', 'success');
-    }
+    return redirect()->route('admin.obat.index')
+        ->with('message', 'Stok obat berhasil diperbarui');
+}
+
 
     public function destroy($id)
     {
@@ -72,4 +68,41 @@ class ObatController extends Controller
             ->with('message', 'Data Obat berhasil dihapus')
             ->with('type', 'success');
     }
+
+    public function stok($id)
+    {
+        $obat = Obat::findOrFail($id);
+        return view('admin.obat.stok', compact('obat'));
+    }
+
+    public function updateStok(Request $request, $id)
+    {
+        $request->validate([
+            'stok' => 'required|integer|min:1',
+            'aksi' => 'required|in:tambah,kurang'
+        ]);
+
+        $obat = Obat::findOrFail($id);
+
+        if ($request->aksi === 'tambah') {
+            $obat->stok = $obat->stok + $request->stok;
+        } else {
+            if ($obat->stok < $request->stok) {
+                return back()->with([
+                    'message' => 'Stok tidak mencukupi',
+                    'type' => 'danger'
+                ]);
+            }
+            $obat->stok = $obat->stok - $request->stok;
+        }
+
+        $obat->save();
+
+        return redirect()->back()->with([
+            'message' => 'Stok berhasil diperbarui',
+            'type' => 'success'
+        ]);
+    }
+
+
 }
